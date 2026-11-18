@@ -7,6 +7,7 @@ use App\Enums\RoleEnum;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -53,17 +54,20 @@ class User extends Authenticatable
         ];
     }
 
-    public function isAdmin(): bool {
+    public function isAdmin(): bool
+    {
         return $this->role === RoleEnum::ADMIN;
     }
 
     /**
-     * Get all of the rooms for the User
+     * The rooms that belong to the User
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function rooms(): HasMany
+    public function rooms(): BelongsToMany
     {
-        return $this->hasMany(Room::class, "created_by", "id");
+        return $this->belongsToMany(Room::class)
+            ->withPivot('last_read_at')
+            ->withTimestamps();
     }
 }
