@@ -12,7 +12,7 @@ class UserService
     ) {}
 
     public function getAllUsers() : LengthAwarePaginator {
-        return $this->user->latest()->paginate(10, ["id", "name", "username", "email", "created_at", "updated_at"]);
+        return $this->user->latest()->paginate(10, ["id", "name", "username", "email", "role", "created_at", "updated_at"]);
     }
 
     public function getUserById(string $id) : User {

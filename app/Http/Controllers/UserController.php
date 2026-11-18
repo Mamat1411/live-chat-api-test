@@ -5,19 +5,23 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
 use App\Http\Responses\ApiResponse;
+use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
     public function __construct(
         private UserService $userService
-    ) {}
+    ) {
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        Gate::authorize("viewAny", User::class);
         $users = $this->userService->getAllUsers();
         return ApiResponse::success(
             UserResource::collection($users),
@@ -49,10 +53,11 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        $user = new UserResource($this->userService->getUserById($id));
+        $user = $this->userService->getUserById($id);
+        Gate::authorize('view', $user);
 
         return ApiResponse::success(
-            $user,
+            new UserResource($user),
             'User retrieved successfully'
         );
     }
@@ -64,6 +69,7 @@ class UserController extends Controller
     {
         $validatedData = $request->validated();
         $user = $this->userService->getUserById($id);
+        Gate::authorize('update', $user);
 
         return DB::transaction(
             function () use ($user, $validatedData) {
@@ -82,6 +88,7 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         $user = $this->userService->getUserById($id);
+        Gate::authorize('delete', $user);
 
         return DB::transaction(
             function () use ($user) {

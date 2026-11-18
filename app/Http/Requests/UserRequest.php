@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\RoleEnum;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -13,7 +14,7 @@ class UserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->check() && auth()->user()->role === RoleEnum::ADMIN->value;
     }
 
     /**
@@ -41,6 +42,7 @@ class UserRequest extends FormRequest
                 Rule::unique('users')->ignore($userId),
             ],
             'password' => [$isUpdate ? 'sometimes' : 'required', 'string'],
+            'role' => [$isUpdate ? 'sometimes' : 'required', Rule::in(RoleEnum::values())],
         ];
     }
 }
