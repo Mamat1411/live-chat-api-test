@@ -8,10 +8,4 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::group([
-    "prefix"=> "/users"
-], function () {
-    Route::get("",[UserController::class, "index"]);
-    Route::get("{users}",[UserController::class,"show"]);
-    Route::post("",[UserController::class,"store"]);
-});
+Route::apiResource("users", UserController::class);

@@ -24,6 +24,7 @@ class UserRequest extends FormRequest
     public function rules(): array
     {
         $isUpdate = in_array($this->method(), ["PUT","PATCH"]);
+        $userId = $this->route('user');
 
         return [
             'name' => [$isUpdate ? 'sometimes' : 'required', 'string', 'max:100'],
@@ -31,13 +32,13 @@ class UserRequest extends FormRequest
                 $isUpdate ? 'sometimes' : 'required',
                 'string',
                 'max:100',
-                Rule::unique('users')->ignore($this->user?->id),
+                Rule::unique('users')->ignore($userId),
             ],
             'email'=> [
                 $isUpdate ? 'sometimes' : 'required',
                 'email',
                 'max:100',
-                Rule::unique('users')->ignore($this->user?->id),
+                Rule::unique('users')->ignore($userId),
             ],
             'password' => [$isUpdate ? 'sometimes' : 'required', 'string'],
         ];
