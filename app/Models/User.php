@@ -7,6 +7,7 @@ use App\Enums\RoleEnum;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -56,4 +57,13 @@ class User extends Authenticatable
         return $this->role === RoleEnum::ADMIN;
     }
 
+    /**
+     * Get all of the rooms for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function rooms(): HasMany
+    {
+        return $this->hasMany(Room::class, "created_by", "id");
+    }
 }
