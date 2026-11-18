@@ -23,7 +23,7 @@ class UserController extends Controller
     {
         Gate::authorize("viewAny", User::class);
         $users = $this->userService->getAllUsers();
-        return ApiResponse::success(
+        return ApiResponse::paginated(
             UserResource::collection($users),
             'Users retrieved successfully'
         );
